@@ -75,8 +75,10 @@ def filter_out_bans(mappings, bans):
     new_mappings = []
     for mapping in mappings:
         for ban in bans:
-            if not fnmatch.fnmatch(mapping.pattern, ban):
-                new_mappings.append(mapping)
+            if fnmatch.fnmatch(mapping.pattern, ban):
+                break
+        else:
+            new_mappings.append(mapping)
     return new_mappings
 
 
