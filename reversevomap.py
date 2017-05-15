@@ -11,7 +11,7 @@ from collections import namedtuple
 from itertools import ifilter
 
 
-DEFAULT_VOMS_MAPFILE = "/usr/share/voms-mapfile-default"
+DEFAULT_VOMS_MAPFILE = "/usr/share/osg/voms-mapfile-default"
 VOMS_MAPFILE = " /etc/grid-security/voms-mapfile "
 BAN_MAPFILE = "/etc/grid-security/ban-voms-mapfile"
 
