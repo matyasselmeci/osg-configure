@@ -98,9 +98,9 @@ def get_vos(mappings):
 
 
 def main(*args):
-    print("\n".join(
-        filter_by_existing_users(filter_out_bans(read_mapfiles(), read_banfile()))
-    ))
+    mappings = filter_by_existing_users(
+        filter_out_bans(read_mapfiles(), read_banfile()))
+    print("\n".join(m.pattern for m in mappings))
     return 0
 
 
