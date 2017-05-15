@@ -38,7 +38,7 @@ def read_mapfiles():
                         continue
                     else:
                         mappings.append(Mapping(match.group(1), match.group(2)))
-        except OSError as err:
+        except EnvironmentError as err:
             if err.errno == errno.ENOENT:
                 continue
             else:
@@ -62,7 +62,7 @@ def read_banfile():
                     continue
                 else:
                     bans.append(match.group(1))
-    except OSError as err:
+    except EnvironmentError as err:
         if err.errno == errno.ENOENT:
             sys.stdout.write(BAN_MAPFILE + " not found - all mappings might fail!")
         else:
