@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import classad
 import re
-import utilities
+from . import utilities
 
 
 class RCEntry(object):

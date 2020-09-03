@@ -1,5 +1,6 @@
 """ Module to hold various validation functions """
 
+from __future__ import absolute_import
 import logging
 import re
 import socket

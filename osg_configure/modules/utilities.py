@@ -1,5 +1,6 @@
 """ Module to hold various utility functions """
 
+from __future__ import absolute_import
 import re
 import socket
 import os
@@ -72,7 +73,7 @@ def _compose_attribute_file(attributes):
     """Make the contents of an osg attributes file"""
 
     def islist(var):
-        return type(var) is types.ListType
+        return type(var) is list
 
     variable_string = ""
     export_string = ""
