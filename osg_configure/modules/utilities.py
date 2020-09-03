@@ -471,7 +471,7 @@ def rpm_installed(rpm_name):
     True if rpms are installed, False otherwise
     """
     trans_set = rpm.TransactionSet()
-    if isinstance(rpm_name, types.StringType):
+    if isinstance(rpm_name, str):
         return trans_set.dbMatch('name', rpm_name).count() in (1, 2)
 
     # check with iterable type
