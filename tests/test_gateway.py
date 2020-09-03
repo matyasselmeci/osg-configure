@@ -1,5 +1,6 @@
 """Unit tests for job gateway configuration"""
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -47,7 +48,7 @@ class TestGateway(unittest.TestCase):
         options = settings.options
         variables = {'htcondor_gateway_enabled': True}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Option %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],

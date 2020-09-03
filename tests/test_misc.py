@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -53,7 +54,7 @@ class TestMisc(unittest.TestCase):
         except Exception as e:
             self.fail("Received exception while parsing configuration: %s" % e)
 
-        self.assertTrue(settings.options.has_key('authorization_method'),
+        self.assertTrue('authorization_method' in settings.options,
                         "Attribute authorization_method missing")
         self.assertEqual(settings.options['authorization_method'].value,
                          'gridmap',
@@ -72,7 +73,7 @@ class TestMisc(unittest.TestCase):
         except Exception as e:
             self.fail("Received exception while parsing configuration: %s" % e)
 
-        self.assertTrue(settings.options.has_key('authorization_method'),
+        self.assertTrue('authorization_method' in settings.options,
                         "Attribute authorization_method missing")
         self.assertEqual(settings.options['authorization_method'].value,
                          'local-gridmap',

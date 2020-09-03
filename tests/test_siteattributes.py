@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -65,7 +66,7 @@ class TestSiteAttributes(unittest.TestCase):
                      'OSG_SITE_LONGITUDE': '84.23',
                      'OSG_SITE_LATITUDE': '23.32'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -100,7 +101,7 @@ class TestSiteAttributes(unittest.TestCase):
                      'OSG_SITE_LONGITUDE': '-84.23',
                      'OSG_SITE_LATITUDE': '-23.32'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -135,7 +136,7 @@ class TestSiteAttributes(unittest.TestCase):
                      'OSG_SITE_LONGITUDE': '-84.23',
                      'OSG_SITE_LATITUDE': '-23.32'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],

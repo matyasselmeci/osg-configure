@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -68,7 +69,7 @@ class TestStorage(unittest.TestCase):
                      'OSG_SITE_READ': '/bin',
                      'OSG_SITE_WRITE': '/usr/bin'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -111,7 +112,7 @@ class TestStorage(unittest.TestCase):
                      'OSG_SITE_READ': '/tmp',
                      'OSG_SITE_WRITE': '/var'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -153,7 +154,7 @@ class TestStorage(unittest.TestCase):
                      'OSG_SITE_READ': '/var',
                      'OSG_SITE_WRITE': '/usr'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -195,7 +196,7 @@ class TestStorage(unittest.TestCase):
                      'OSG_SITE_READ': '/var',
                      'OSG_SITE_WRITE': '/usr'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],

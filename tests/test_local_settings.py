@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -54,15 +55,15 @@ class TestLocalSettings(unittest.TestCase):
             self.fail("Received exception while parsing configuration: %s" % e)
 
         attributes = settings.get_attributes()
-        self.assertTrue(attributes.has_key('test1'),
+        self.assertTrue('test1' in attributes,
                         'Attribute test1 missing')
         self.assertEqual(attributes['test1'], 'Value1',
                          'Wrong value obtained for test1')
 
-        self.assertFalse(attributes.has_key('missing_key'),
+        self.assertFalse('missing_key' in attributes,
                          'Non-existent key (missing_key) found')
 
-        self.assertFalse(attributes.has_key('default_key'),
+        self.assertFalse('default_key' in attributes,
                          'Default key recognized as a local attribute')
 
     def testBogusVarName(self):

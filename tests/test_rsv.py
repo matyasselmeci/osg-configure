@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -89,7 +90,7 @@ class TestRSV(unittest.TestCase):
                      'enable_gratia': True,
                      'enable_nagios': True}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Option %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -116,7 +117,7 @@ class TestRSV(unittest.TestCase):
                      'enable_gratia': False,
                      'enable_nagios': False}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Option %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -142,7 +143,7 @@ class TestRSV(unittest.TestCase):
                      'enable_gratia': True,
                      'enable_nagios': True}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Option %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],

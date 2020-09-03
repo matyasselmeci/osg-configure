@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -57,7 +58,7 @@ class TestGratia(unittest.TestCase):
         variables = {'probes': 'jobmanager:gratia-osg-prod.opensciencegrid.org:80, ' \
                                'gridftp:gratia-osg-transfer.opensciencegrid.org:80'}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Attribute %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -86,7 +87,7 @@ class TestGratia(unittest.TestCase):
         options = settings.options
         variables = {'probes': 'jobmanager:gratia-osg-itb.opensciencegrid.org:80'}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Attribute %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -115,7 +116,7 @@ class TestGratia(unittest.TestCase):
         options = settings.options
         variables = {'probes': 'jobmanager:gratia-osg-prod.opensciencegrid.org:80'}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Attribute %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -144,7 +145,7 @@ class TestGratia(unittest.TestCase):
         options = settings.options
         variables = {'probes': 'jobmanager:gratia-osg-itb.opensciencegrid.org:80'}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Attribute %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -164,7 +165,7 @@ class TestGratia(unittest.TestCase):
         options = settings.options
         variables = {'probes': 'jobmanager:gratia-osg-itb.opensciencegrid.org:80'}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Attribute %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],
@@ -193,7 +194,7 @@ class TestGratia(unittest.TestCase):
         options = settings.options
         variables = {'probes': 'jobmanager:gratia-osg-prod.opensciencegrid.org:80'}
         for var in variables:
-            self.assertTrue(options.has_key(var),
+            self.assertTrue(var in options,
                             "Attribute %s missing" % var)
             self.assertEqual(options[var].value,
                              variables[var],

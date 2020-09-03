@@ -4,6 +4,7 @@
 # pylint: disable=R0904
 
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -59,7 +60,7 @@ class TestCondor(unittest.TestCase):
                    'OSG_JOB_MANAGER': 'Condor'}
         for option in options:
             value = options[option]
-            self.assertTrue(attributes.has_key(option),
+            self.assertTrue(option in attributes,
                             "Attribute %s missing" % option)
             err_msg = "Wrong value obtained for %s, " \
                       "got %s instead of %s" % (option, attributes[option], value)
@@ -123,12 +124,12 @@ class TestCondor(unittest.TestCase):
             self.fail("Received exception while parsing configuration: %s" % e)
 
         attributes = settings.get_attributes()
-        self.assertTrue(attributes.has_key('OSG_CONDOR_LOCATION'),
+        self.assertTrue('OSG_CONDOR_LOCATION' in attributes,
                         'Attribute OSG_CONDOR_LOCATION missing')
         self.assertEqual(attributes['OSG_CONDOR_LOCATION'], '/my/condor',
                          'Wrong value obtained for OSG_CONDOR_LOCATION')
 
-        self.assertTrue(attributes.has_key('OSG_CONDOR_CONFIG'),
+        self.assertTrue('OSG_CONDOR_CONFIG' in attributes,
                         'Attribute OSG_CONDOR_CONFIG missing')
         self.assertEqual(attributes['OSG_CONDOR_CONFIG'],
                          '/my/condor/etc/condor_config',
@@ -143,12 +144,12 @@ class TestCondor(unittest.TestCase):
             self.fail("Received exception while parsing configuration: %s" % e)
 
         attributes = settings.get_attributes()
-        self.assertTrue(attributes.has_key('OSG_CONDOR_LOCATION'),
+        self.assertTrue('OSG_CONDOR_LOCATION' in attributes,
                         'Attribute OSG_CONDOR_LOCATION missing')
         self.assertEqual(attributes['OSG_CONDOR_LOCATION'], '/my/condor',
                          'Wrong value obtained for OSG_CONDOR_LOCATION')
 
-        self.assertTrue(attributes.has_key('OSG_CONDOR_CONFIG'),
+        self.assertTrue('OSG_CONDOR_CONFIG' in attributes,
                         'Attribute OSG_CONDOR_CONFIG missing')
         self.assertEqual(attributes['OSG_CONDOR_CONFIG'],
                          '/etc/condor/condor_config',
@@ -168,12 +169,12 @@ class TestCondor(unittest.TestCase):
             self.fail("Received exception while parsing configuration: %s" % e)
 
         attributes = settings.get_attributes()
-        self.assertTrue(attributes.has_key('OSG_CONDOR_LOCATION'),
+        self.assertTrue('OSG_CONDOR_LOCATION' in attributes,
                         'Attribute OSG_CONDOR_LOCATION missing')
         self.assertEqual(attributes['OSG_CONDOR_LOCATION'], '/opt/condor',
                          'Wrong value obtained for OSG_CONDOR_LOCATION')
 
-        self.assertTrue(attributes.has_key('OSG_CONDOR_CONFIG'),
+        self.assertTrue('OSG_CONDOR_CONFIG' in attributes,
                         'Attribute OSG_CONDOR_CONFIG missing')
         self.assertEqual(attributes['OSG_CONDOR_CONFIG'],
                          '/etc/condor/condor_config',
@@ -191,12 +192,12 @@ class TestCondor(unittest.TestCase):
             self.fail("Received exception while parsing configuration: %s" % e)
 
         attributes = settings.get_attributes()
-        self.assertTrue(attributes.has_key('OSG_CONDOR_LOCATION'),
+        self.assertTrue('OSG_CONDOR_LOCATION' in attributes,
                         'Attribute OSG_CONDOR_LOCATION missing')
         self.assertEqual(attributes['OSG_CONDOR_LOCATION'], '/usr/local/condor',
                          'Wrong value obtained for OSG_CONDOR_LOCATION')
 
-        self.assertTrue(attributes.has_key('OSG_CONDOR_CONFIG'),
+        self.assertTrue('OSG_CONDOR_CONFIG' in attributes,
                         'Attribute OSG_CONDOR_CONFIG missing')
         self.assertEqual(attributes['OSG_CONDOR_CONFIG'],
                          '/etc/condor/condor_config',

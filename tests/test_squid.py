@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -56,7 +57,7 @@ class TestSquid(unittest.TestCase):
         attributes = settings.get_attributes()
         variables = {'OSG_SQUID_LOCATION': "test.com:3128"}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -81,7 +82,7 @@ class TestSquid(unittest.TestCase):
         attributes = settings.get_attributes()
         variables = {'OSG_SQUID_LOCATION': 'example.com:3128'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],
@@ -133,7 +134,7 @@ class TestSquid(unittest.TestCase):
 
         variables = {'OSG_SQUID_LOCATION': 'test.com:3128'}
         for var in variables:
-            self.assertTrue(attributes.has_key(var),
+            self.assertTrue(var in attributes,
                             "Attribute %s missing" % var)
             self.assertEqual(attributes[var],
                              variables[var],

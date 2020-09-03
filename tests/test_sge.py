@@ -3,6 +3,7 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -60,7 +61,7 @@ class TestSGE(unittest.TestCase):
                    'OSG_JOB_MANAGER': 'SGE'}
         for option in options:
             value = options[option]
-            self.assertTrue(attributes.has_key(option),
+            self.assertTrue(option in attributes,
                             "Attribute %s missing" % option)
             err_msg = "Wrong value obtained for %s, " \
                       "got %s instead of %s" % (option, attributes[option], value)
