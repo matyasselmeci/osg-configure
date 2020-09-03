@@ -4,7 +4,6 @@ from __future__ import absolute_import
 import re
 import socket
 import os
-import types
 import sys
 import glob
 import stat
@@ -79,8 +78,7 @@ def _compose_attribute_file(attributes):
     export_string = ""
     # keep a list of array variables
     array_vars = {}
-    keys = attributes.keys()
-    keys.sort()
+    keys = sorted(attributes.keys())
     for key in keys:
         value = attributes[key]
         if value is None:
