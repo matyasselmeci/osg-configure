@@ -16,7 +16,7 @@ rpm -U https://dl.fedoraproject.org/pub/epel/epel-release-latest-${OS_VERSION}.n
 rpm -U https://repo.opensciencegrid.org/osg/${OSG_VERSION}/osg-${OSG_VERSION}-el${OS_VERSION}-release-latest.rpm
 
 if [[ $OS_VERSION -gt 7 ]]; then
-    yum -y install python3-condor python3 make
+    yum -y install --enablerepo=osg-testing python3-condor python3 make
     PYTHON=python3
 else
     yum -y install python2-condor make
