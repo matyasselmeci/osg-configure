@@ -2,7 +2,7 @@ language: minimal
 sudo: required
 env:
   matrix:
-  - OS_VERSION=7 OSG_VERSION=3.5
+#  - OS_VERSION=7 OSG_VERSION=3.5
   - OS_VERSION=8 OSG_VERSION=3.5
 
 services:
