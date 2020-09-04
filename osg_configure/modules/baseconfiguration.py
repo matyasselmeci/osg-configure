@@ -1,10 +1,6 @@
 """ Base class for all configuration classes """
 
-from __future__ import absolute_import
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import errno
 import logging
 import os
@@ -54,7 +50,7 @@ class BaseConfiguration(object):
             else:
                 self.enabled = True
                 return True
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             raise exceptions.SettingError("Can't get value for enable option "
                                           "in %s section" % self.config_section)
 
@@ -124,7 +120,7 @@ class BaseConfiguration(object):
         Make sure config argument is of the correct type
         """
 
-        if not isinstance(configuration, ConfigParser.ConfigParser):
+        if not isinstance(configuration, configparser.ConfigParser):
             raise TypeError('Invalid type for configuration, must be a '
                             'ConfigParser or subclass')
 
@@ -149,7 +145,7 @@ class BaseConfiguration(object):
                                       self.config_section,
                                       option)
                 self.log("Got %s" % option.value)
-            except ConfigParser.Error as err:
+            except configparser.Error as err:
                 self.log("Syntax error in configuration: %s" % err,
                          option=option.name,
                          section=self.config_section,
@@ -234,7 +230,7 @@ class BaseConfiguration(object):
                 return True
             else:
                 return False
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             raise exceptions.SettingError("Can't get value for enable option "
                                           "in %s section" % section)
 

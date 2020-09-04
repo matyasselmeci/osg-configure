@@ -1,22 +1,16 @@
 """ Module to hold various utility functions """
-
-from __future__ import absolute_import
+import errno
+import glob
+import logging
+import os
+import platform
 import re
 import socket
-import os
-import sys
-import glob
 import stat
-import tempfile
 import subprocess
-import platform
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
-import errno
-import logging
-
+import sys
+import tempfile
+from configparser import ConfigParser, NoOptionError, NoSectionError
 
 __all__ = ['get_elements',
            'write_attribute_file',
@@ -43,14 +37,12 @@ __all__ = ['get_elements',
            'add_or_replace_setting',
            'NullLogger',
            'split_host_port',
-           'to_str',
-           'to_bytes',
 ]
 
 CONFIG_DIRECTORY = "/etc/osg"
 
 logger = logging.getLogger(__name__)
-devnull = open("/dev/null", "w+b")
+
 
 def get_elements(element=None, filename=None):
     """Get values for selected element from xml file specified in filename"""
@@ -175,11 +167,11 @@ def get_vos(user_vo_file):
         user_vo_file = '/var/lib/osg/user-vo-map'
     if not os.path.isfile(user_vo_file):
         return []
-    file_buffer = open(user_vo_file, 'rb')
+    file_buffer = open(user_vo_file, "r", encoding="latin-1")
     vo_list = []
     for line in file_buffer:
         try:
-            line = to_str(line).strip()
+            line = line.strip()
             if line.startswith("#"):
                 continue
             vo = line.split()[1]
@@ -201,8 +193,8 @@ def service_enabled(service_name):
     if service_name is None or service_name == "":
         return False
     process = subprocess.Popen(['/sbin/service', '--list', service_name],
-                               stdout=subprocess.PIPE)
-    output = to_str(process.communicate()[0])
+                               stdout=subprocess.PIPE, encoding="latin-1")
+    output = process.communicate()[0]
     if process.returncode != 0:
         return False
 
@@ -243,7 +235,7 @@ def fetch_crl():
                                      ]
         try:
             fetch_crl_process = subprocess.Popen([crl_path, '-p', '10', '-T', '30'], stdout=subprocess.PIPE,
-                                                 stderr=subprocess.STDOUT)
+                                                 stderr=subprocess.STDOUT, encoding="latin-1")
         except OSError as e:
             if e.errno == errno.ENOENT:
                 sys.stdout.write("Can't find fetch-crl script, skipping fetch-crl invocation\n")
@@ -254,7 +246,7 @@ def fetch_crl():
         sys.stdout.write("Running %s, this process may take " % crl_path +
                          "some time to fetch all the crl updates\n")
         sys.stdout.flush()
-        outerr = to_str(fetch_crl_process.communicate()[0])
+        outerr = fetch_crl_process.communicate()[0]
         if fetch_crl_process.returncode != 0:
             sys.stdout.write("fetch-crl script had some errors:\n" + outerr + "\n")
             sys.stdout.flush()
@@ -337,8 +329,9 @@ def get_condor_config_val(variable, executable='condor_config_val', quiet_undefi
     """
     try:
         process = subprocess.Popen([executable, variable],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = [to_str(x) for x in process.communicate()]
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   encoding="latin-1")
+        output, error = process.communicate()
         if error and not (error.startswith('Not defined:') and quiet_undefined):
             sys.stderr.write(error)
         if process.returncode != 0:
@@ -359,9 +352,9 @@ def read_file(filename, default=None):
     """
     contents = default
     try:
-        fh = open(filename, 'rb')
+        fh = open(filename, "r", encoding="latin-1")
         try:
-            contents = to_str(fh.read())
+            contents = fh.read()
         finally:
             fh.close()
     except EnvironmentError:
@@ -369,7 +362,7 @@ def read_file(filename, default=None):
     return contents
 
 
-def atomic_write(filename=None, contents=None, **kwargs):
+def atomic_write(filename=None, contents=None, encoding="latin-1", errors="strict", mode=None):
     """
     Atomically write contents to a file
 
@@ -391,7 +384,7 @@ def atomic_write(filename=None, contents=None, **kwargs):
 
     try:
         (config_fd, temp_name) = tempfile.mkstemp(dir=os.path.dirname(filename))
-        mode = kwargs.get('mode', None)
+        # Note: config_fd is opened in binary mode
         if mode is None:
             try:
                 mode = stat.S_IMODE(os.stat(filename).st_mode)
@@ -403,6 +396,8 @@ def atomic_write(filename=None, contents=None, **kwargs):
                     raise
         try:
             try:
+                if not isinstance(contents, bytes):
+                    contents = contents.encode(encoding, errors)
                 os.write(config_fd, contents)
                 # need to fsync data to make sure data is written on disk before renames
                 # see ext4 documentation for more information
@@ -456,7 +451,7 @@ def any_rpms_installed(*rpm_names):
     """
     if isinstance(rpm_names[0], list) or isinstance(rpm_names[0], tuple):
         rpm_names = list(rpm_names[0])
-    return (True in (rpm_installed(rpm_name) for rpm_name in rpm_names))
+    return True in (rpm_installed(rpm_name) for rpm_name in rpm_names)
 
 
 def rpm_installed(rpm_name):
@@ -471,11 +466,13 @@ def rpm_installed(rpm_name):
     True if rpms are installed, False otherwise
     """
     if isinstance(rpm_name, str):
-        return subprocess.call(["rpm", "-q", rpm_name], stdout=devnull, stderr=devnull) == 0
+        return subprocess.call(["rpm", "-q", rpm_name], stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL) == 0
 
     # check with iterable type
     for name in rpm_name:
-        if subprocess.call(["rpm", "-q", name], stdout=devnull, stderr=devnull) != 0:
+        if subprocess.call(["rpm", "-q", name], stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL) != 0:
             return False
     return True
 
@@ -538,35 +535,29 @@ def get_os_version():
     return version_list
 
 
-def config_safe_get(configuration, section, option, default=None):
+def config_safe_get(configuration: ConfigParser, section: str, option: str, default=None):
     """
     Return the value of the option `option` from the config section
     `section` or `default` if the section or the option are missing
 
-    :type configuration: ConfigParser.ConfigParser
-    :type section: str
-    :type option: str
     """
     try:
         return configuration.get(section, option)
-    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
+    except (NoOptionError, NoSectionError):
         return default
 
 
-def config_safe_getboolean(configuration, section, option, default=None):
+def config_safe_getboolean(configuration: ConfigParser, section: str, option: str, default=None):
     """
     Wrapper around RawConfigParser.getboolean the way config_safe_get is a
     wrapper around RawConfigParser.get. Note that it also returns default
     in case of a ValueError, which is raised if the value is not a valid
     boolean.
 
-    :type configuration: ConfigParser.ConfigParser
-    :type section: str
-    :type option: str
     """
     try:
         return configuration.getboolean(section, option)
-    except (ConfigParser.NoOptionError, ConfigParser.NoSectionError, ValueError):
+    except (NoOptionError, NoSectionError, ValueError):
         return default
 
 
@@ -649,63 +640,3 @@ def reconfig_service(service, reconfig_cmd):
         return True
 
     return False
-
-
-if not hasattr(__builtins__, "unicode"):
-    unicode = __builtins__.unicode = str
-
-if str is bytes:  # Python 2
-    def to_str(strlike, encoding="utf-8", errors="backslashreplace"):
-        """Turns a unicode into a str (bytes) or leaves it alone.
-
-        The default encoding is utf-8 (which will not raise
-        a UnicodeEncodeError); you may have gotten unicode from json.loads().
-        """
-        if isinstance(strlike, unicode):
-            return strlike.encode(encoding, errors)
-        return strlike
-
-    to_bytes = to_str
-else:  # Python 3
-    def to_str(strlike, encoding="latin-1", errors="strict"):
-        """Turns a bytes into a str or leaves it alone.
-
-        The default encoding is latin-1 (which will not raise
-        a UnicodeDecodeError); best to use when you want to treat the data
-        as arbitrary bytes, but some function is expecting a str.
-        """
-        if isinstance(strlike, bytes):
-            return strlike.decode(encoding, errors)
-        return strlike
-
-    def to_bytes(strlike, encoding="latin-1", errors="backslashreplace"):
-        """Turns a str into bytes or leaves it alone.
-
-        The default encoding is latin-1 under the assumption that you have
-        obtained the str from to_str, applied some transformation, and want
-        to pass it back to the system.
-        """
-        if isinstance(strlike, str):
-            return strlike.encode(encoding, errors)
-        return strlike
-
-
-class NullLogger(logging.Logger):
-    """A dummy Logger where the logging functions ignore all parameters
-    passed to it.  They are static methods so you don't need to instantiate
-    it.  Useful as a default value for functions which take a logger as an
-    argument.
-
-    """
-    @staticmethod
-    def info(*args, **kwargs): pass
-    @staticmethod
-    def warning(*args, **kwargs): pass
-    @staticmethod
-    def error(*args, **kwargs): pass
-    @staticmethod
-    def critical(*args, **kwargs): pass
-    @staticmethod
-    def debug(*args, **kwargs): pass
-    @staticmethod
-    def log(*args, **kwargs): pass
