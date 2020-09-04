@@ -3,11 +3,9 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-import imp
 
 # setup system library path
 pathname = os.path.realpath('../')

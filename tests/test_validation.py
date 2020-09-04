@@ -3,14 +3,10 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 
 # setup system library path
 pathname = os.path.realpath('../')
@@ -57,7 +53,7 @@ class TestValidation(unittest.TestCase):
 
         test_email = "a.3a-3bc@t-ea.34.org"
         self.assertTrue(validation.valid_email(test_email),
-                        "a.3a-3bc@t-ea.34.org marked as an invalid email " \
+                        "a.3a-3bc@t-ea.34.org marked as an invalid email "
                         "address")
 
     def test_valid_location(self):
@@ -121,7 +117,7 @@ class TestValidation(unittest.TestCase):
         Test functionality of valid_boolean function
         """
         config_file = get_test_config('utilities/valid_boolean.ini')
-        config = ConfigParser.SafeConfigParser()
+        config = configparser.SafeConfigParser()
         config.read(config_file)
         self.assertFalse(validation.valid_boolean(config, 'Test', 'invalid_bool'),
                          'invalid_bool flagged as valid')

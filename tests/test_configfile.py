@@ -3,14 +3,10 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 
 # setup system library path
 pathname = os.path.realpath('../')
@@ -31,7 +27,7 @@ class TestConfigFile(unittest.TestCase):
         Test functionality of get_option function
         """
         # check to see if exception is raised if option is not present
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         section = 'Test'
         config.add_section(section)
         option = configfile.Option(name='foo')

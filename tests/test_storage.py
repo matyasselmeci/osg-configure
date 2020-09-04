@@ -3,14 +3,10 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import logging
 
 # setup system library path
@@ -23,16 +19,8 @@ from osg_configure.modules import exceptions
 from osg_configure.configure_modules import storage
 from osg_configure.modules.utilities import get_test_config
 
-# NullHandler is only available in Python 2.7+
-try:
-    NullHandler = logging.NullHandler
-except AttributeError:
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
-
 global_logger = logging.getLogger(__name__)
-global_logger.addHandler(NullHandler())
+global_logger.addHandler(logging.NullHandler())
 
 
 class TestStorage(unittest.TestCase):
@@ -50,7 +38,7 @@ class TestStorage(unittest.TestCase):
             return
 
         config_file = get_test_config("storage/storage1.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = storage.StorageConfiguration(logger=global_logger)
@@ -93,7 +81,7 @@ class TestStorage(unittest.TestCase):
         if not utilities.ce_installed():
             return
         config_file = get_test_config("storage/storage2.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = storage.StorageConfiguration(logger=global_logger)
@@ -136,7 +124,7 @@ class TestStorage(unittest.TestCase):
         if not utilities.ce_installed():
             return
         config_file = get_test_config("storage/storage3.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = storage.StorageConfiguration(logger=global_logger)
@@ -178,7 +166,7 @@ class TestStorage(unittest.TestCase):
         if not utilities.ce_installed():
             return
         config_file = get_test_config("storage/oasis.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = storage.StorageConfiguration(logger=global_logger)
@@ -216,7 +204,7 @@ class TestStorage(unittest.TestCase):
         mandatory = ['se_available']
         for option in mandatory:
             config_file = get_test_config("storage/storage1.ini")
-            configuration = ConfigParser.SafeConfigParser()
+            configuration = configparser.SafeConfigParser()
             configuration.read(config_file)
             configuration.remove_option('Storage', option)
 

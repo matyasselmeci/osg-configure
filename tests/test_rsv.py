@@ -3,14 +3,10 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import logging
 import pwd
 
@@ -60,7 +56,7 @@ class TestRSV(unittest.TestCase):
         pwd.getpwnam = self._old_getpwnam
 
     def load_settings_from_files(self, *cfgfiles):
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         for cfgfile in cfgfiles:
             configuration.read(get_test_config(cfgfile))
 
@@ -176,7 +172,7 @@ class TestRSV(unittest.TestCase):
         """
 
         config_file = get_test_config("rsv/rsv2.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = rsv.RsvConfiguration(logger=global_logger)
@@ -186,7 +182,7 @@ class TestRSV(unittest.TestCase):
         mandatory = ['enable_nagios']
         for option in mandatory:
             config_file = get_test_config("rsv/rsv1.ini")
-            configuration = ConfigParser.SafeConfigParser()
+            configuration = configparser.SafeConfigParser()
             configuration.read(config_file)
             configuration.remove_option('RSV', option)
 

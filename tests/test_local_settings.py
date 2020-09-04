@@ -3,14 +3,10 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import logging
 
 # setup system library path
@@ -44,7 +40,7 @@ class TestLocalSettings(unittest.TestCase):
         """
 
         config_file = get_test_config("localsettings/local_settings1.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.optionxform = str
         configuration.read(config_file)
 
@@ -68,7 +64,7 @@ class TestLocalSettings(unittest.TestCase):
 
     def testBogusVarName(self):
         config_file = get_test_config("localsettings/bogusvarname.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.optionxform = str
         configuration.read(config_file)
 
@@ -80,7 +76,7 @@ class TestLocalSettings(unittest.TestCase):
 
     def testBogusQuote(self):
         config_file = get_test_config("localsettings/bogusquote.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.optionxform = str
         configuration.read(config_file)
 

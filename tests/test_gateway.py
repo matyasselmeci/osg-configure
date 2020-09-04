@@ -1,13 +1,9 @@
 """Unit tests for job gateway configuration"""
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import logging
 
 
@@ -36,7 +32,7 @@ class TestGateway(unittest.TestCase):
         """
 
         config_file = get_test_config("gateway/gateway_default.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = gateway.GatewayConfiguration(logger=global_logger)

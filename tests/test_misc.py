@@ -3,14 +3,10 @@
 # pylint: disable=W0703
 # pylint: disable=R0904
 
-from __future__ import absolute_import
 import os
 import sys
 import unittest
-try:
-    import ConfigParser
-except ImportError:
-    import configparser as ConfigParser
+import configparser
 import logging
 
 # setup system library path
@@ -45,7 +41,7 @@ class TestMisc(unittest.TestCase):
         """
 
         config_file = get_test_config("misc/misc_gridmap.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = misc.MiscConfiguration(logger=global_logger)
@@ -64,7 +60,7 @@ class TestMisc(unittest.TestCase):
                                           'gridmap'))
 
         config_file = get_test_config("misc/misc_local_gridmap.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = misc.MiscConfiguration(logger=global_logger)
@@ -88,7 +84,7 @@ class TestMisc(unittest.TestCase):
         """
 
         config_file = get_test_config("misc/valid_settings2.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = misc.MiscConfiguration(logger=global_logger)
@@ -107,7 +103,7 @@ class TestMisc(unittest.TestCase):
         """
 
         config_file = get_test_config("misc/invalid_settings1.ini")
-        configuration = ConfigParser.SafeConfigParser()
+        configuration = configparser.SafeConfigParser()
         configuration.read(config_file)
 
         settings = misc.MiscConfiguration(logger=global_logger)
