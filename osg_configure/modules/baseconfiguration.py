@@ -16,8 +16,9 @@ HOSTCERT_PATH = "/etc/grid-security/hostcert.pem"
 HOSTKEY_PATH = "/etc/grid-security/hostkey.pem"
 
 
-class BaseConfiguration(object):
+class BaseConfiguration:
     """Base class for inheritance by configuration"""
+
     # pylint: disable-msg=W0613
     def __init__(self, *args, **kwargs):
         self.logger = logging.getLogger(__name__)

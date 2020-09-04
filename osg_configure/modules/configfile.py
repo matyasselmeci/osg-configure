@@ -49,7 +49,7 @@ def read_config_files(**kwargs):
             config.optionxform = str
     except configparser.Error as e:
         raise IOError("Can't read and parse config files:\n%s" % e)
-    read_files = config.read(file_list)
+    read_files = config.read(file_list, encoding="latin-1")
     read_files.sort()
     if file_list != read_files:
         unread_files = set(file_list).difference(read_files)
@@ -169,7 +169,7 @@ def jobmanager_enabled(configuration):
     return False
 
 
-class Option(object):
+class Option:
     """
     Class to encapsulate options as used by osg_configure
     """
