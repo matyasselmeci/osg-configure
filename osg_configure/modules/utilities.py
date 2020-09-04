@@ -43,6 +43,8 @@ __all__ = ['get_elements',
            'add_or_replace_setting',
            'NullLogger',
            'split_host_port',
+           'to_str',
+           'to_bytes',
 ]
 
 CONFIG_DIRECTORY = "/etc/osg"
@@ -173,11 +175,11 @@ def get_vos(user_vo_file):
         user_vo_file = '/var/lib/osg/user-vo-map'
     if not os.path.isfile(user_vo_file):
         return []
-    file_buffer = open(user_vo_file, 'r')
+    file_buffer = open(user_vo_file, 'rb')
     vo_list = []
     for line in file_buffer:
         try:
-            line = line.strip()
+            line = to_str(line).strip()
             if line.startswith("#"):
                 continue
             vo = line.split()[1]
@@ -200,7 +202,7 @@ def service_enabled(service_name):
         return False
     process = subprocess.Popen(['/sbin/service', '--list', service_name],
                                stdout=subprocess.PIPE)
-    output = process.communicate()[0]
+    output = to_str(process.communicate()[0])
     if process.returncode != 0:
         return False
 
@@ -252,7 +254,7 @@ def fetch_crl():
         sys.stdout.write("Running %s, this process may take " % crl_path +
                          "some time to fetch all the crl updates\n")
         sys.stdout.flush()
-        outerr = fetch_crl_process.communicate()[0]
+        outerr = to_str(fetch_crl_process.communicate()[0])
         if fetch_crl_process.returncode != 0:
             sys.stdout.write("fetch-crl script had some errors:\n" + outerr + "\n")
             sys.stdout.flush()
@@ -336,7 +338,7 @@ def get_condor_config_val(variable, executable='condor_config_val', quiet_undefi
     try:
         process = subprocess.Popen([executable, variable],
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = process.communicate()
+        output, error = [to_str(x) for x in process.communicate()]
         if error and not (error.startswith('Not defined:') and quiet_undefined):
             sys.stderr.write(error)
         if process.returncode != 0:
@@ -357,9 +359,9 @@ def read_file(filename, default=None):
     """
     contents = default
     try:
-        fh = open(filename, 'r')
+        fh = open(filename, 'rb')
         try:
-            contents = fh.read()
+            contents = to_str(fh.read())
         finally:
             fh.close()
     except EnvironmentError:
@@ -648,6 +650,44 @@ def reconfig_service(service, reconfig_cmd):
 
     return False
 
+
+if not hasattr(__builtins__, "unicode"):
+    unicode = __builtins__.unicode = str
+
+if str is bytes:  # Python 2
+    def to_str(strlike, encoding="utf-8", errors="backslashreplace"):
+        """Turns a unicode into a str (bytes) or leaves it alone.
+
+        The default encoding is utf-8 (which will not raise
+        a UnicodeEncodeError); you may have gotten unicode from json.loads().
+        """
+        if isinstance(strlike, unicode):
+            return strlike.encode(encoding, errors)
+        return strlike
+
+    to_bytes = to_str
+else:  # Python 3
+    def to_str(strlike, encoding="latin-1", errors="strict"):
+        """Turns a bytes into a str or leaves it alone.
+
+        The default encoding is latin-1 (which will not raise
+        a UnicodeDecodeError); best to use when you want to treat the data
+        as arbitrary bytes, but some function is expecting a str.
+        """
+        if isinstance(strlike, bytes):
+            return strlike.decode(encoding, errors)
+        return strlike
+
+    def to_bytes(strlike, encoding="latin-1", errors="backslashreplace"):
+        """Turns a str into bytes or leaves it alone.
+
+        The default encoding is latin-1 under the assumption that you have
+        obtained the str from to_str, applied some transformation, and want
+        to pass it back to the system.
+        """
+        if isinstance(strlike, str):
+            return strlike.encode(encoding, errors)
+        return strlike
 
 
 class NullLogger(logging.Logger):
