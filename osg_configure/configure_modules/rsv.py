@@ -115,7 +115,7 @@ class RsvConfiguration(BaseConfiguration):
         self._gratia_probes_2d = []
         self._gratia_metric_map = {}
         self._enable_rsv_downloads = False
-        self._meta = ConfigParser.RawConfigParser()
+        self._meta = configparser.RawConfigParser()
         self.htcondor_gateway_enabled = True
         self.use_service_cert = True
         self.copy_host_cert_for_service_cert = False
