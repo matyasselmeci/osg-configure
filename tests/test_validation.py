@@ -153,7 +153,7 @@ class TestValidation(unittest.TestCase):
 
         filename = get_test_config('utilities/newline.ini')
         _stderr = sys.stderr
-        sys.stderr = open(os.devnull, 'wb')
+        sys.stderr = open(os.devnull, 'w')
         # need to do this instead of putting this in assert so that stderr can
         # be restored after call
         result = validation.valid_ini_file(filename)
