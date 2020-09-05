@@ -207,7 +207,12 @@ class TestConfigFile(unittest.TestCase):
         for directory in config_dirs:
             try:
                 config = configfile.read_config_files(config_directory=directory)
-                print(f"config={config}")
+                if config:
+                    for section in config.sections():
+                        print(f"section={section}")
+                        for option, value in config[section].items():
+                            print(f"option={option}")
+                            print(f"value={value}")
             except SystemExit:
                 pass
             else:
