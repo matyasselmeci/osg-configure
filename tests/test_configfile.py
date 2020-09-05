@@ -205,7 +205,13 @@ class TestConfigFile(unittest.TestCase):
         temp = sys.stderr
         sys.stderr = open(os.devnull, 'w')
         for directory in config_dirs:
-            self.assertRaises(SystemExit, configfile.read_config_files, config_directory=directory)
+            try:
+                config = configfile.read_config_files(config_directory=directory)
+                print(f"config={config}")
+            except SystemExit:
+                pass
+            else:
+                self.fail("Expected SystemExit from configfile.read_config_files(%r)" % directory)
         sys.stderr = temp
 
 
