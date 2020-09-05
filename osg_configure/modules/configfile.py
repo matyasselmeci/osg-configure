@@ -35,20 +35,12 @@ def read_config_files(**kwargs):
     """
 
     config_dir = kwargs.get('config_directory', CONFIG_DIRECTORY)
-    print(f"config_dir={config_dir}")
     case_sensitive = kwargs.get('case_sensitive', False)
-    print(f"case_sensitive={case_sensitive}")
-    valid_dir = validation.valid_directory(config_dir)
-    print(f"valid_dir={valid_dir}")
-    if not valid_dir:
+    if not validation.valid_directory(config_dir):
         raise IOError("%s does not exist" % config_dir)
     file_list = get_file_list(config_directory=config_dir)
-    print(f"file_list={file_list}")
     for filename in file_list:
-        print(f"filename={filename}")
-        valid_ini = validation.valid_ini_file(filename)
-        print(f"valid_ini={valid_ini}")
-        if not valid_ini:
+        if not validation.valid_ini_file(filename):
             sys.stderr.write("Error found in %s\n" % filename)
             sys.exit(1)
     try:
@@ -58,11 +50,9 @@ def read_config_files(**kwargs):
     except configparser.Error as e:
         raise IOError("Can't read and parse config files:\n%s" % e)
     read_files = config.read(file_list, encoding="latin-1")
-    print(f"read_files={read_files}")
     read_files.sort()
     if file_list != read_files:
         unread_files = set(file_list).difference(read_files)
-        print(f"unread_files={unread_files}")
         msg = "Can't read following config files:\n %s" % ("\n".join(unread_files))
         raise IOError(msg)
     return config
