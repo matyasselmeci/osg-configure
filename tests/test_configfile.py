@@ -200,7 +200,6 @@ class TestConfigFile(unittest.TestCase):
         """
 
         config_dirs = [get_test_config('config-space1.d'),
-                       get_test_config('config-space2.d'),
                        get_test_config('config-space3.d')]
         temp = sys.stderr
         sys.stderr = open(os.devnull, 'w')
