@@ -194,30 +194,6 @@ class TestConfigFile(unittest.TestCase):
         self.assertFalse(configfile.jobmanager_enabled(config),
                          "jobmanager_enabled returned true on a config without an enabled jobmanager")
 
-    def test_ini_spaces(self):
-        """
-        Test to make sure ini files with spaces work correctly
-        """
-
-        config_dirs = [get_test_config('config-space1.d'),
-                       get_test_config('config-space3.d')]
-        temp = sys.stderr
-        sys.stderr = open(os.devnull, 'w')
-        for directory in config_dirs:
-            try:
-                config = configfile.read_config_files(config_directory=directory)
-                if config:
-                    for section in config.sections():
-                        print(f"section={section}")
-                        for option, value in config[section].items():
-                            print(f"option={option}")
-                            print(f"value={value}")
-            except SystemExit:
-                pass
-            else:
-                self.fail("Expected SystemExit from configfile.read_config_files(%r)" % directory)
-        sys.stderr = temp
-
 
 if __name__ == '__main__':
     unittest.main()
