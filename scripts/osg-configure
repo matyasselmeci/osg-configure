@@ -36,6 +36,7 @@ DEFAULT_JOB_ENVIRONMENT_ATTRIBUTES = ['OSG_SITE_NAME',
                                       'PATH']
 BATCH_SYSTEM_CONFIG_RPMS = ['osg-configure-condor', 'osg-configure-lsf', 'osg-configure-pbs', 'osg-configure-sge',
                             'osg-configure-slurm', 'osg-configure-bosco']
+BUGREPORT_EMAIL = "OSG Support <help@opensciencegrid.org>"
 
 
 ############################# Function Definitions ############################
@@ -51,12 +52,6 @@ def real_error_exit(message="Critical error occurred, exiting", exception=None):
     sys.exit(1)
 
 
-def real_normal_exit(message="Configuration completed, exiting..."):
-    """Function to do all the cleanup and exit"""
-    logging.info(message)
-    sys.exit(0)
-
-
 # The next two functions are redefined in the main() function once the logger
 # has been set up
 def error_exit(msg, exception=None):
@@ -64,11 +59,6 @@ def error_exit(msg, exception=None):
     sys.stderr.write("You may be able to get more details rerunning %s with " \
                      "the -d option and/or by examining %s\n" % (sys.argv[0], LOG_FILE))
     sys.exit(1)
-
-
-def normal_exit(msg):
-    sys.stdout.write("%s\n" % msg)
-    sys.exit(0)
 
 
 def get_configuration_modules():
@@ -455,10 +445,14 @@ def check_configuration(modules, attributes, force=False):
 
 def main():
     global error_exit
-    global normal_exit
 
-    normal_exit_message = "Configuration completed, exiting..."
+    prog = sys.argv[0]
+
     error_exit_message = "Critical error occurred, exiting..."
+    more_details_message = (
+            f"You may be able to get more details rerunning {prog} with the -d "
+            f"option and/or by examining {LOG_FILE}"
+    )
 
     parser = optparse.OptionParser(usage='Usage: %prog [options] arg1 arg2', version='%prog ' + __version__)
     parser.add_option('-d',
@@ -517,22 +511,16 @@ def main():
     log_level = logging.INFO
 
     if os.getuid() != 0:
-        error_exit("You must be root when running %s" % sys.argv[0])
+        parser.exit(2, f"You must be root when running {prog}\n")
 
     # Set the umask so we get the right permissions on files
     os.umask(0o22)
 
-    if options.debug == True:
-        sys.stdout.write("Writing debug information to " +
-                         "/var/log/osg/osg-configure.log\n")
+    if options.debug:
+        print(f"Writing debug information to {LOG_FILE}")
         log_level = logging.DEBUG
 
     configure_module = options.module
-    if options.mode == VERIFY:
-        normal_exit_message = "Verification completed, exiting..."
-    elif options.mode == LIST:
-        normal_exit_message = "List modules completed, exiting..."
-
 
     # setup logging
     try:
@@ -551,8 +539,6 @@ def main():
         logger.addHandler(console)
 
         error_exit = lambda mesg=error_exit_message, exception=None: real_error_exit(mesg, exception)
-        normal_exit = lambda mesg=normal_exit_message: real_normal_exit(mesg)
-
 
     except IOError:
         sys.stderr.write("Can't open %s for logging, exiting...\n" % LOG_FILE)
@@ -569,31 +555,33 @@ def main():
         elif options.mode == VERIFY:
             # verify settings
             verify_system(modules)
+            print("Verification completed, exiting...")
         elif options.mode == LIST:
             list_modules(modules)
+            print("List modules completed, exiting...")
         elif options.mode == QUERY:
             query_option(modules, option=options.option)
+            print("Configuration completed, exiting...")
         else:
-            parser.print_usage()
-            error_exit("Must specify either -c, -v, or -l")
+            parser.error("Must specify either -c, -v, or -l")
     except exceptions.Error as err:
-        debug_info = "Fatal exception %s\n%s" % (err, traceback.format_exc())
-        if logger:
-            logger.debug(debug_info)
-        error_exit("Fatal exception: %s" % err)
+        logger.error("Fatal error %s", err)
+        logger.debug("Traceback:", exc_info=True)
+        print(more_details_message, file=sys.stderr)
+        sys.exit(1)
     except SystemExit:
         # needed since SystemExit inherits from Exception
         raise
     except Exception as e:
-        debug_info = "Unhandled exception %s\n%s" % (e, traceback.format_exc())
-        if logger:
-            logger.debug(debug_info)
-        else:
-            sys.stderr.write(debug_info + "\n")
-        sys.stderr.write("Please contact the developer, an unknown error occurred\n")
-        error_exit("Unknown exception encountered while running: %s" % e)
+        logger.exception("Unhandled exception %s" % e)
+        print("Please send a bug report with as much information", file=sys.stderr)
+        print("about the circumstances as you can provide to:", file=sys.stderr)
+        print(BUGREPORT_EMAIL, file=sys.stderr)
+        print(more_details_message, file=sys.stderr)
+        sys.exit(99)
 
-    normal_exit("%s completed" % (sys.argv[0],))
+    print(f"{prog} completed")
+    sys.exit(0)
 
 
 if __name__ == '__main__':
